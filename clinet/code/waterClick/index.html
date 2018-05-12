@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>轻点水面</title>
+</head>
+<style>
+	#canvas{
+		border:1px solid #ccc;
+	}
+</style>
+<body>
+	<canvas id="canvas" width="500" height="500"></canvas>
+</body>
+<script>
+/*
+	完成时间：2018-4-24 16:19:23
+	姓名：张靖石
+ */
+	(function(window){
+
+		// 封装绘制工具 构造函数输入 canvasDom
+		function drawTools (canvas){ 
+			this.canvas = canvas;
+			this.ctx = canvas.getContext('2d');
+		}
+
+		// 画圆
+		drawTools.prototype.circle = function (x, y, r, sAngle, eAngle, counterclockwise){
+			var ctx = this.ctx;
+			ctx.beginPath();
+			ctx.arc.apply(ctx, arguments);
+			ctx.stroke();
+		}
+
+		// 清除画布
+		drawTools.prototype.clearCanvas = function(){
+			this.canvas.width = this.canvas.width;
+		}
+
+
+
+		// 获取画布
+		var canvas = document.getElementById("canvas");
+		// 为画布绑定click事件
+		canvas.onclick = function(event){
+			ripplesCache.push([event.offsetX, event.offsetY, new Date().getTime()])
+
+			start()
+
+		}
+		// 为画布注册绘制工具
+		var draw = new drawTools(canvas);
+
+
+ 		// 涟漪存储
+		var ripplesCache = [];
+		// 涟漪扩散速度系数
+		var ripplesSpeed = 10;
+
+
+		// 动画内容
+		function redrew(){
+			var time = new Date().getTime();
+			draw.clearCanvas();
+			ripplesCache = ripplesCache.filter(function(d){
+				var r = (time - d[2]) * ripplesSpeed / 100;
+				draw.circle(d[0], d[1], r, 0, 2*Math.PI)
+				return r < Math.sqrt(canvas.width*canvas.width+canvas.height*canvas.height)
+			});
+
+			if(!ripplesCache.length) return end();
+			start();
+		}
+
+		// 帧ID
+		var frameID = 0,
+			stop = true;
+		// 启动动画
+		function start(){
+			stop = false;
+			frameID = requestAnimationFrame(redrew)
+		}
+		// 停止动画
+		function end(){
+			stop = true;
+			cancelAnimationFrame(frameID)
+			frameID = 0;
+		}
+
+
+
+
+
+	})(window)
+</script>
+</html>

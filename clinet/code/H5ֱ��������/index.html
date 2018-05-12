@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>视频播放</title>
+
+<script src="//cdn.jsdelivr.net/npm/eruda"></script>
+<script>
+	// eruda.init();
+</script>
+
+	<!-- cdnjs -->
+	<script   src="https://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>
+
+	<!-- jquery mobile -->
+	<link href="https://cdn.bootcss.com/jquery-mobile/1.4.2/jquery.mobile.css" rel="stylesheet">
+	<script src="https://cdn.bootcss.com/jquery-mobile/1.4.2/jquery.mobile.js"></script>
+
+	<!-- unpkg -->
+	<link href="https://cdn.bootcss.com/video.js/6.9.0/alt/video-js-cdn.css" rel="stylesheet">
+	<script src="js/video.js"></script>
+	<script src="https://unpkg.com/videojs-contrib-hls/dist/videojs-contrib-hls.js"></script>
+	<script src="https://unpkg.com/videojs-flash/dist/videojs-flash.js"></script>
+
+
+	<script src="js/brige.js"></script>
+
+  <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+	<video
+		id="my-player"
+		class="video-js vjs-default-skin vjs-big-play-centered"
+		controls
+		preload="auto"
+		x5-playsinline="" playsinline="" webkit-playsinline="" poster=""
+		data-setup='{"example_option":true}'
+		>
+	</video>
+
+</body>
+<script>
+
+
+	function myBrowser(){
+		if(navigator.userAgent.match(/(iPhone|iPod|Android|ios)/i)){
+			return true
+		}
+		return false;
+	}
+	//以下是调用上面的函数
+	var mb = myBrowser();
+
+
+	var url = 'http://yntvapp.4kb.cn/webapp-yrt',
+		userid = '988407491518578688';
+
+	var options = {
+		html5: {
+		    hls: {
+		        withCredentials: true
+	        }
+		},
+		flash: {
+		    hls: {
+		        withCredentials: true
+		    }
+		}
+	};
+
+  var wsListStore = null
+
+  function callHandler(){
+    if(window.WebViewJavascriptBridge && window.WebViewJavascriptBridge.callHandler) window.WebViewJavascriptBridge.callHandler.apply(window.WebViewJavascriptBridge, arguments);
+  }
+
+  function registerHandler(){
+    var ar = arguments;
+    connectWebViewJavascriptBridge(function(bridge){
+      bridge.registerHandler.apply(bridge, ar);
+    })
+  }
+
+	function refreshPage() {
+	  jQuery.mobile.pageContainer.pagecontainer('change', window.location.href, {
+	    allowSamePageTransition: true,
+	    transition: 'none',
+	    reloadPage: true 
+	    // 'reload' parameter not working yet: //github.com/jquery/jquery-mobile/issues/7406
+	  });
+	}
+
+	function get (u, callback, data){
+		if(!data) data = {};
+		data.userid = userid;
+		$.ajax({
+			type:'get',
+			url:url+u,
+			dataType:'jsonp',
+			jsonpCallback:'onBack',
+			data:data,
+      async:false,
+			success:function(data){
+        if(data.loginStatus == false) callHandler('login');
+        callback(data)
+      }
+		})
+	}
+
+	function getWSList(callback, data){
+		get('/play/TVList.do', callback, data);
+	}
+
+	function getPDList(callback, data){
+		get('/play/channelList.do', callback, data);
+	}
+
+	function getJMList(callback, data){
+		get('/play/programList.do', callback, data);
+	}
+
+
+	function createBtn(text, className){
+		return '<button class="ui-btn '+ className +'">' + text + '</button>'
+	}
+
+
+	function createTR(tdList){
+		var dom =  $('<tr></tr>');
+		for(var i in tdList) dom.append(tdList[i]);
+		return dom;
+	}
+
+	function createTD(DOM, className){
+		var dom = $('<td class="'+ (className || '') +'"></td>')
+		return dom.append(DOM);
+	}
+
+	function createTable(trList, id){
+		var dom = $('<div class="tablist-content"></div> ');
+		var table = $('<table data-role="table" id="'+ (id || '') +'" data-mode="columntoggle" class="ui-responsive table-stroke"></table>');
+		var tb = $('<tbody></tbody>');
+		for(var i in trList) tb.append(trList[i]);
+		return dom.append(table.append(tb))
+    }
+
+	function removeShadow(){
+	  	$('#my-player').removeClass('video-qxdBoxShow');
+	  	$('#my-player').removeClass('video-settingBoxShow');
+	  	$('#my-player').removeClass('video-selectPDBoxShow');
+	  	$('#my-player').removeClass('video-fenxiangBoxShow');
+	}
+
+
+	getWSList(function (data) {
+    wsListStore = data.list
+    setVideoSelectPDBox(wsListStore);
+	})
+
+
+	var player = videojs('my-player', options, function onPlayerReady() {
+		videojs.log('Your player is ready!');
+
+		// In this context, `this` is the player that was created by Video.js.
+		this.play();
+
+		// How about an event listener?
+		this.on('ended', function() {
+			videojs.log('Awww...over so soon?!');
+		});
+	});
+	player.isFullscreen_ = true;
+
+
+/* 原工具栏按钮 */
+  var qxd = $('<button class="vjs-control vjs-button ui-btn-hidden" type="button" aria-live="polite" title="清晰度" aria-disabled="false" data-disabled="false"><span aria-hidden="true" class="vjs-icon-placeholder">标清</button>')
+
+  qxd.on('tap', function(){
+  	$('#my-player').addClass('video-qxdBoxShow');
+  })
+
+  var full = $('<button class="vjs-fullscreen-control vjs-control vjs-button ui-btn-hidden" type="button" aria-live="polite" title="Fullscreen" aria-disabled="false" data-disabled="false"><span aria-hidden="true" class="vjs-icon-placeholder"></span><span class="vjs-control-text">Fullscreen</span></button>');
+
+  full.on('tap', function  () {
+  	$("body").toggleClass('full')
+    callHandler('setRotate', {rotate:$("body").hasClass('full')?'1': '0'}, function (response) {
+        console.log('rotate', response)
+    });
+  })
+
+  var setting = $('<button class="vjs-control vjs-button ui-btn-hidden" type="button" aria-live="polite" title="设置" aria-disabled="false" data-disabled="false"><span aria-hidden="true" class="vjs-icon-placeholder">设置</button>');
+
+  setting.on('tap', function(){
+  	$("#my-player").addClass('video-settingBoxShow');
+  })
+
+
+  $("#my-player").find('.vjs-control-bar').find('.vjs-fullscreen-control').hide();
+  $("#my-player").find('.vjs-control-bar').append(qxd);
+  $("#my-player").find('.vjs-control-bar').append(setting);
+  $("#my-player").find('.vjs-control-bar').append(full);
+
+
+
+/* 新工具栏按钮 */
+  var shoucang = $("<span class='shocang'>收藏</span>");
+  shoucang.on('tap', function (argument) {
+    get('/play/collection.do', function(data){
+      showDialog(data.message);
+    })
+  })
+
+  var fenxiang = $("<span class='fenxiang'>分享</span>");
+  fenxiang.on('tap', function (argument) {
+  	$('#my-player').addClass('video-fenxiangBoxShow');
+  })
+
+  var pindao = $("<span class='pindao'>频道</span>");
+  pindao.on('tap', function (argument) {
+  	$('#my-player').addClass('video-selectPDBoxShow');
+  })
+
+  var pageBack = $("<span class='pageBack'><image src='images/u302.png'></image></span>");
+  pageBack.on('tap', function(argument){
+    callHandler('pageBack');
+  })
+
+  var tools = $("<div class='video-tools'></div>");
+  tools.append(pindao);
+  tools.append(shoucang);
+  tools.append(fenxiang);
+  tools.append(pageBack);
+
+
+
+/* 新层 */
+  var dialog = $("<div class='video-dialog'>弹出层</div>");
+  dialog.hide();
+
+  var qxdBox = $("<div class='video-qxdBox'></div>");
+
+
+/*设置*/
+  var settingBox = $("<div class='video-settingBox'></div>")
+
+  var hm = $("<div class='video-hm'>画面：</div>")
+  var h_50 = $("<div class='hm_btn'><image src='images/u394.png'></image>50%</div>");
+  var h_75 = $("<div class='hm_btn'><image src='images/u394.png'></image>75%</div>");
+  var h_100 = $("<div class='hm_btn'><image src='images/u394.png'></image>100%</div>");
+  var h_tc = $("<div class='hm_btn'><image src='images/u394.png'></image>填充</div>");
+
+  hm.append($('<div></div>'))
+  hm.append(h_50);
+  hm.append(h_75);
+  hm.append(h_100);
+  hm.append(h_tc);
+
+  var ld = $('<input class="video-settingBox-ld" start="aaa" data-mini="true" type="range" min="0" max="100" value="100">');
+  settingBox.append(hm)
+  settingBox.append('亮度：')
+  setTimeout(function(){
+    settingBox.append(ld)
+    ld.slider({
+      start:function(){
+        setBrightness($(this).val());
+      },
+      stop:function(){
+        setBrightness($(this).val());
+      }
+    })
+  },100)
+
+  function setBrightness(num){
+    callHandler('setBrightness', num);
+  }
+  registerHandler('getBrightness', function (data, responseCallback) {
+    setLD(data.num)
+  });
+
+  function setLD (n){
+    $('.video-settingBox-ld').val(n).slider('refresh')
+  }
+
+
+/*卫视选择*/
+  var selectPDBox = $("<div class='video-selectPDBox'></div>")
+  var typeList = $('<div class="typeList" data-role="controlgroup" data-mini="true"></div>');
+  var wsList = $('<div class="wsList" data-role="controlgroup" data-mini="true"></div>');
+
+  function setVideoSelectPDBox(list){
+    list.forEach(function(d){
+
+      var ws = $(createBtn(d.name, 'ui-corner-all'));
+      ws.on('tap', function(){
+        wsList.find('.ui-controlgroup-controls').children().remove();
+        getJMList(function(data){
+          data.list.forEach(function(d){
+            var w = $(createBtn(d.name, 'ui-corner-all'));
+            w.on('tap', function(d){
+              removeShadow();
+              console.log(d);
+            })
+            wsList.find('.ui-controlgroup-controls').append(w);
+          })
+          wsList.trigger("create");
+        })
+      })
+      typeList.find('.ui-controlgroup-controls').append(ws);
+
+    })
+
+    typeList.trigger("create");
+  }
+  selectPDBox.append(typeList);
+  selectPDBox.append(wsList);
+
+/*分享*/
+  var fenxiangBox = $("<div class='video-fenxiangBox'></div>");
+  var fBox = $("<div class='video-fBox'></div>")
+
+  var fx_qq = $("<div class='fx_btn'><image src='images/u349.png'></image>QQ</div>")
+  fx_qq.on('tap', function(){
+    callHandler('share', {type: '1'}, function (response) {
+        console.log('qq', response)
+    });
+  })
+  var fx_kj = $("<div class='fx_btn'><image src='images/u351.png'></image>QQ空间</div>")
+  fx_kj.on('tap', function(){
+    callHandler('share', {type: '2'}, function (response) {
+        console.log('kj', response)
+    });
+  })
+  var fx_wx = $("<div class='fx_btn'><image src='images/u353.png'></image>微信</div>")
+  fx_wx.on('tap', function(){
+    callHandler('share', {type: '0'}, function  (response) {
+        console.log('wx', response)
+    });
+  })
+  // var fx_py = $("<div class='fx_btn'><image src='images/u355.png'></image>朋友圈</div>")
+  // fx_py.on('tap', function(){
+  //   callHandler('share', {type: '1'}, function (response) {
+  //       console.log('py', response)
+  //   });
+  // })
+  var fx_wb = $("<div class='fx_btn'><image src='images/u357.png'></image>微博</div>")
+  fx_wb.on('tap', function(){
+    callHandler('share', {type: '3'}, function (response) {
+        console.log('wb', response)
+    });
+  })
+  var fx_fz = $("<div class='fx_btn'><image src='images/u347.png'></image>复制链接</div>")
+  fx_fz.on('tap', function(){
+    callHandler('share', {type: '4'}, function (response) {
+        console.log('fz', response)
+    });
+  })
+
+  fBox.append(fx_qq)
+  fBox.append(fx_kj)
+  fBox.append(fx_wx)
+  // fBox.append(fx_py)
+  fBox.append(fx_wb)
+  fBox.append(fx_fz)
+
+  fenxiangBox.append(fBox)
+
+
+/*锁定*/
+  var lock = $("<div class='video-lockBox'></div>")
+  lock.on('tap', function(){
+  	$('#my-player').toggleClass('video-lock');
+  })
+  var lockShadow = $("<div class='video-lockShadow'></div>");
+
+  var boxShadow = $("<div class='video-boxShadow'></div>");
+  boxShadow.on('tap', removeShadow)
+
+  var dialogTime = 0;
+  function showDialog (context){
+    if(!context) return;
+    dialog.text(context);
+    dialog.show(100);
+    clearTimeout(dialogTime);
+    dialogTime = setTimeout(function(){
+      dialog.hide(300);
+    }, 3000)
+  }
+
+  /*亮度滑动*/
+  var brightness = $("<div class='video-brightness'></div>");
+  var start = 0;
+  brightness.on('touchstart', function(event){
+    start = event.originalEvent.changedTouches["0"].pageY;
+  })
+  brightness.on('touchmove', function(event){
+    var yl = start - event.originalEvent.changedTouches["0"].pageY
+    callHandler('setBrightness ', {num: yl}, function (response) {
+        console.log('fz', response)
+    });
+  })
+  brightness.on('touchend', function(event){
+    start = 0;
+  })
+
+/* 增加层 */
+	$('#my-player').append(dialog)
+	$('#my-player').append(lock)
+	$('#my-player').append(tools)
+	$('#my-player').append(qxdBox)
+	$('#my-player').append(boxShadow)
+	$('#my-player').append(settingBox)
+	$('#my-player').append(lockShadow)
+	$('#my-player').append(selectPDBox)
+  $('#my-player').append(fenxiangBox)
+  $('#my-player').append(brightness)
+
+
+
+
+
+	var m3u8 = [
+      'http://store1.yntv.cn/channels/yn/yntv-intl/m3u8:sd',
+      'http://store2.yntv.cn/channels/yn/YNTV_1/m3u8:sd/1525199340000,1525202160000', 
+      'http://store2.yntv.cn/channels/yn/YNTV_1/m3u8:sd',
+      'http://hls3a.douyucdn.cn/live/703747rcfoQ8tRJg_550/playlist.m3u8?wsSecret=618bf0e176d823cb3138a02e728e3fa3&wsTime=1525092787&token=h5-douyu-0-703747-69e0a8199ae773815d6da72f408ea58a&did=AND-CHR|46-975195871525095469519', 
+      'http://pullhls8928c963.live.126.net/live/618f4060864140b5b15f951ffc3eb470/playlist.m3u8',
+      'http://live.hkstv.hk.lxdns.com/live/hks/playlist.m3u8'
+    ];
+
+	var rtmp = [
+      'rtmp://v8928c963.live.126.net/live/618f4060864140b5b15f951ffc3eb470',
+      'rtmp://live.hkstv.hk.lxdns.com/live/hks'
+    ];
+
+
+if (myBrowser()) {
+	player.src({
+		src: m3u8[2],
+		type:'application/x-mpegURL',
+		withCredentials: true
+	})
+}else{
+
+	player.src({
+		src:rtmp[1],
+		type:'rtmp/flv',
+		withCredentials: true
+	})
+  
+}
+
+</script>
+</html>
