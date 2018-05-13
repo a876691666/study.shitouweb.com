@@ -8,6 +8,11 @@
     "ejs": "*",
     "express": "~4.13.1",
     "express-session": "*",
-    "socket.io": "^1.4.8"
+    "mobx": "^4.2.1",
+    "mobx-react": "^5.1.2",
+    "socket.io": "^1.4.8",
+    "mobx": "^4.2.1",
+    "mobx-react": "^5.1.2",
+
   }
 }
