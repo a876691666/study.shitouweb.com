@@ -1,10 +1,10 @@
-const 
+const
   webpack = require('webpack'),
   path = require('path'),
   glob = require('glob');
 
 
-var 
+var
   ExtractTextPlugin = require("extract-text-webpack-plugin"),
   HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -16,58 +16,58 @@ var
 /*
     定义一个数组，module.exports中的plugins项可以直接使用这个数组
  */
-var plugins = []; 
+var plugins = [];
 /*
     调用ExtractTextPlugin，把单独的css打到dist/css/下面，该路径也是从distPath开始
     [name]为引用这个css文件的js文件的入口文件打包后的名字，即入口文件output后的名字
  */
-plugins.push(new ExtractTextPlugin("css/[name].css")); 
+plugins.push(new ExtractTextPlugin("css/[name].css"));
 plugins.push(new HtmlWebpackPlugin({
-  filename:'../index.html',
+  filename: '../index.html',
   template: 'src/index.html'
 }))
 
 
 
 module.exports = {
-  optimization:{
-    splitChunks:{
-      name:'common'
+  optimization: {
+    splitChunks: {
+      name: 'common'
     },
-    minimize:true
+    minimize: true
   },
-  entry: path.resolve(__dirname, '../src/index.js'), 
+  entry: path.resolve(__dirname, '../src/index.js'),
   output: {
-      path: path.resolve(__dirname, '../dist'), // 输出的路径
-      publicPath: '/react/dist/',
-      filename: 'bundle.js'  // 打包后文件
+    path: path.resolve(__dirname, '../dist'), // 输出的路径
+    publicPath: '/react/dist/',
+    filename: 'bundle.js' // 打包后文件
   },
-  mode:'development',
+  mode: 'development',
   resolve: {
-      //require文件的时候不需要写后缀了，可以自动补全
-      extensions: ['*', '.js', '.jsx','.css']
+    //require文件的时候不需要写后缀了，可以自动补全
+    extensions: ['*', '.js', '.jsx', '.css']
   },
-  plugins:plugins,
+  plugins: plugins,
   module: {
-    rules: [
-      {
-        test:/\.jsx?$/,
-        exclude:/node_modules/,
-        loader:'babel-loader',
-        query:{
-          presets:['react','es2015']
+    rules: [{
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['react', 'es2015']
         }
       },
       {
-          test: /\.html$/,
-          use: [
-            {loader: "html-loader"}
-          ]
+        test: /\.html$/,
+        use: [{
+          loader: "html-loader"
+        }]
       },
       {
         test: /\.css$/,
-        use: [
-          { loader: 'style-loader' },
+        use: [{
+            loader: 'style-loader'
+          },
           {
             loader: 'css-loader',
             options: {
@@ -78,9 +78,9 @@ module.exports = {
       },
       {
         test: /\.svg$/,
-        use: [
-          { loader: 'file-loader' },
-        ]
+        use: [{
+          loader: 'file-loader'
+        }, ]
       }
     ]
   }

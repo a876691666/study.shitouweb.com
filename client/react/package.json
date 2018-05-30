@@ -3,15 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "html-webpack-plugin": "^3.2.0",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^0.28.11",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^1.1.11",
+    "html-loader": "^0.5.5",
+    "style-loader": "^0.21.0",
+    "url-loader":"^0.6.2",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.10.1",
+    "webpack-cli": "^2.1.4",
+    "webpack-dev-server": "^3.1.4",
+    "ajv-keywords":"^3.2.0",
+    "ajv":"^6.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "webpack --verbose --color --display-error-ddedtails --config ./config/webpack.config.dev.js",
-    "test": "react-scripts test --env=jsdom",
+    "devServer": "webpack-dev-server --config ./config/webpack.config.prod.js",
+    "dev":"npm run build && npm run devServer",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
@@ -25,7 +42,12 @@
     "file-loader": "^1.1.11",
     "html-loader": "^0.5.5",
     "style-loader": "^0.21.0",
-    "webpack": "^4.8.2",
-    "webpack-cli": "^2.1.3"
+    "url-loader":"^0.6.2",
+    "html-webpack-plugin": "^3.2.0",
+    "webpack": "^4.10.1",
+    "webpack-cli": "^2.1.4",
+    "webpack-dev-server": "^3.1.4",
+    "ajv-keywords":"^3.2.0",
+    "ajv":"^6.0.0"
   }
 }
