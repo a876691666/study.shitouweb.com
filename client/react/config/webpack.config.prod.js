@@ -46,11 +46,12 @@ module.exports = {
   plugins: plugins,
   module: {
     rules: [{
-        test: /\.jsx?$/,
+        test: /\.(js|jsx)?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
         query: {
-          presets: ['react', 'es2015']
+          presets: ['react', 'es2015','stage-1'],
+          plugins: ['transform-decorators-legacy','transform-decorators']
         }
       },
       {
