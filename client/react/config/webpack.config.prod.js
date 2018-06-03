@@ -1,20 +1,22 @@
 const
   webpack = require('webpack'),
   path = require('path'),
-  glob = require('glob'),
-  opn = require('opn');//打开浏览器
+  glob = require('glob');
+
 
 var
   ExtractTextPlugin = require("extract-text-webpack-plugin"),
   HtmlWebpackPlugin = require('html-webpack-plugin');
 
+
+
+
+
 /***********************设置module.exports中的plugins***************************/
 /*
     定义一个数组，module.exports中的plugins项可以直接使用这个数组
  */
-var plugins = [
-  new webpack.HotModuleReplacementPlugin(),
-];
+var plugins = [];
 /*
     调用ExtractTextPlugin，把单独的css打到dist/css/下面，该路径也是从distPath开始
     [name]为引用这个css文件的js文件的入口文件打包后的名字，即入口文件output后的名字
@@ -24,6 +26,8 @@ plugins.push(new HtmlWebpackPlugin({
   filename: '../index.html',
   template: 'src/index.html'
 }))
+
+
 
 module.exports = {
   optimization: {
@@ -80,11 +84,5 @@ module.exports = {
         }, ]
       }
     ]
-  },
-  devServer: {
-    host: 'localhost',
-    port: 8888,
-    hot: true,
-    open:true
   }
 }

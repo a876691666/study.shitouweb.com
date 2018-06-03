@@ -33,9 +33,9 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "webpack --verbose --color --display-error-ddedtails --config ./config/webpack.config.dev.js",
-    "devServer": "webpack-dev-server --config ./config/webpack.config.prod.js",
-    "dev": "npm run build && npm run devServer",
+    "build": "webpack --verbose --color --display-error-ddedtails --config ./config/webpack.config.prod.js",
+    "server": "webpack-dev-server --config ./config/webpack.config.server.js",
+    "dev": "webpack-dev-server --config ./config/webpack.config.dev.js",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
