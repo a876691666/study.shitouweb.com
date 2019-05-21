@@ -1,4 +1,4 @@
-var user = require('./user.js');
+var feMenu = require('./feMenu.js');
 
 class Agent {
   constructor(connection) {
@@ -64,5 +64,5 @@ class Agent {
   }
 }
 module.exports = {
-  user: new Agent(user),
+  feMenu: new Agent(feMenu),
 };

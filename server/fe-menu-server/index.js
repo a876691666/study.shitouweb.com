@@ -7,8 +7,8 @@ const registerHttp = (httpType, url, callback) => {
 };
 
 registerHttp("get", "/javascriptApi/getGlobalList", function(req, res, next) {
-  feMenu.get("globalList", "apiName, description").then(dbRes => {
-    res.send(dbRes);
+  feMenu.get("javascriptApiGlobalList", "apiName, description").then(dbRes => {
+    res.send(dbRes.data);
   });
   return;
   res.send([
