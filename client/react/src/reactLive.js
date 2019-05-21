@@ -114,4 +114,4 @@ class ReactLive extends React.Component {
 }
 
 
-export default ReactLive;
+export {ReactLive, ClickButton};
