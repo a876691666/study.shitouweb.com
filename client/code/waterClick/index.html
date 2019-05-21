@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>轻点水面</title>
+	<title>轻划水面</title>
 </head>
 <style>
 	#canvas{
@@ -43,11 +43,10 @@
 		// 获取画布
 		var canvas = document.getElementById("canvas");
 		// 为画布绑定click事件
-		canvas.onclick = function(event){
+		canvas.onmousemove = function(event){
 			ripplesCache.push([event.offsetX, event.offsetY, new Date().getTime()])
 
 			start()
-
 		}
 		// 为画布注册绘制工具
 		var draw = new drawTools(canvas);
@@ -57,6 +56,9 @@
 		var ripplesCache = [];
 		// 涟漪扩散速度系数
 		var ripplesSpeed = 10;
+		// 帧ID
+		var frameID = 0,
+			stop = true;
 
 
 		// 动画内容
@@ -70,16 +72,16 @@
 			});
 
 			if(!ripplesCache.length) return end();
-			start();
+			frameID = requestAnimationFrame(redrew);
+			console.log(ripplesCache.length);
 		}
 
-		// 帧ID
-		var frameID = 0,
-			stop = true;
 		// 启动动画
 		function start(){
 			stop = false;
-			frameID = requestAnimationFrame(redrew)
+			if (!frameID) {
+				frameID = requestAnimationFrame(redrew)
+			}
 		}
 		// 停止动画
 		function end(){

@@ -1,0 +1,225 @@
+#header{
+	height: 60px;
+	padding:10px 60px;
+	box-shadow: 0 0 1px #ccc;
+  transition: background-color 0.3s ease-in-out;
+  position: relative;
+  background-color: #fff;
+}
+#main{
+  padding-top:90px;
+}
+
+body.docs #header {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index:100;
+}
+body.docs #nav {
+  position: fixed;
+}
+#nav {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 60px;
+  top: 10px;
+  height: 40px;
+  line-height: 40px;
+}
+#nav .break {
+  display: none;
+}
+#nav li {
+  display: inline-block;
+  position: relative;
+  margin: 0 0.6em;
+}
+#nav .nav-dropdown .nav-link:hover,
+#nav .nav-dropdown .nav-link.current {
+  border-bottom: none;
+}
+#nav .nav-dropdown .nav-link.current::after {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 5px solid #35beff;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  position: absolute;
+  top: 50%;
+  margin-top: -4px;
+  left: 8px;
+}
+.nav-link {
+  padding-bottom: 3px;
+}
+.nav-link:hover,
+.nav-link.current {
+  border-bottom: 3px solid #35beff;
+}
+.nav-link.team,
+.nav-link.contribute {
+  margin-left: 10px;
+}
+.new-label {
+  position: absolute;
+  top: 3px;
+  left: 110%;
+  background-color: #35beff;
+  color: #fff;
+  line-height: 16px;
+  height: 16px;
+  font-size: 9px;
+  font-weight: bold;
+  font-family: "Roboto Mono", Monaco, courier, monospace;
+  padding: 1px 4px 0 6px;
+  border-radius: 4px;
+}
+.search-query {
+  height: 30px;
+  line-height: 30px;
+  box-sizing: border-box;
+  padding: 0 15px 0 30px;
+  border: 1px solid #e3e3e3;
+  color: #2c3e50;
+  outline: none;
+  border-radius: 15px;
+  margin-right: 10px;
+  transition: border-color 0.2s ease;
+  background: #fff url("/images/search.png") 8px 5px no-repeat;
+  background-size: 20px;
+  vertical-align: middle !important;
+}
+.search-query:focus {
+  border-color: #35beff;
+}
+#nav .nav-link {
+  cursor: pointer;
+}
+#nav .nav-dropdown-container .nav-link:hover:not(.current) {
+  border-bottom: none;
+}
+#nav .nav-dropdown-container:hover .nav-dropdown {
+  display: block;
+}
+#nav .nav-dropdown-container.language,
+#nav .nav-dropdown-container.ecosystem {
+  margin-left: 20px;
+}
+#nav .nav-dropdown-container .arrow {
+  pointer-events: none;
+}
+#nav .nav-dropdown {
+  display: none;
+  box-sizing: border-box;
+  max-height: calc(100vh - 61px);
+  overflow-y: auto;
+  position: absolute;
+  top: 100%;
+  right: -15px;
+  background-color: #fff;
+  padding: 10px 0;
+  border: 1px solid #ddd;
+  border-bottom-color: #ccc;
+  text-align: left;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+#nav .nav-dropdown li {
+  line-height: 1.8em;
+  margin: 0;
+  display: block;
+}
+#nav .nav-dropdown li > ul {
+  padding-left: 0;
+}
+#nav .nav-dropdown li:first-child h4 {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+#nav .nav-dropdown a,
+#nav .nav-dropdown h4 {
+  padding: 0 24px 0 20px;
+}
+#nav .nav-dropdown h4 {
+  margin: 0.45em 0 0;
+  padding-top: 0.45em;
+  border-top: 1px solid #eee;
+}
+#nav .nav-dropdown a {
+  color: #3a5169;
+  font-size: 0.9em;
+  display: block;
+}
+#nav .nav-dropdown a:hover {
+  color: #35beff;
+}
+#nav .arrow {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -1px;
+  margin-left: 6px;
+  margin-right: -14px;
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid #ccc;
+}
+
+
+.content{
+transform-style: preserve-3d;
+  width: 1200px;
+  margin:0 auto;
+}
+.card-box{
+  margin:5px;
+  width:290px;
+  height:290px;
+  float:left;
+	transform-style: preserve-3d;
+	transform:perspective(1000px);
+}
+.card{
+	height:100%;
+	width:100%;
+	position:relative;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+}
+.card-mask{
+	height:100%;
+	width:100%;
+	position:absolute;
+	top:0;
+  z-index: 8;
+  cursor: pointer;
+}
+.card-title{
+	color:#fff;
+}
+.card-content{
+	/*-webkit-transform: translateZ(50px); transform: translateZ(50px); */
+	margin:0;padding:20px;
+	height:100%;
+	width:100%;
+	position:absolute;
+	top:0;
+	z-index:3;
+}
+.card-background{
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0;
+	z-index:2;
+	overflow: hidden;
+}
+.card-background, .card-background+*{
+  border-radius: 20px;
+}
