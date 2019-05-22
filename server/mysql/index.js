@@ -1,3 +1,4 @@
+var mysql = require("mysql"); // 调用MySQL模块
 var feMenu = require('./feMenu.js');
 
 class Agent {
@@ -10,7 +11,10 @@ class Agent {
     this.select = this.select.bind(this);
   }
   connect() {
-    const { connection, isConnect } = this;
+    const { isConnect } = this;
+    const that = this;
+    this.connection = mysql.createConnection(this.connection.config);
+    const connection = this.connection;
     return new Promise(function(resolve, reject) {
       if (isConnect) {
         return resolve();
@@ -19,13 +23,14 @@ class Agent {
         if (err) {
           return reject('[connect] - :' + err);
         }
-        this.isConnect = true;
+        that.isConnect = true;
         resolve();
       });
     });
   }
   end() {
     const { connection, isConnect } = this;
+    const that = this;
     return new Promise(function(resolve, reject) {
       if (!isConnect) {
         return resolve();
@@ -34,7 +39,7 @@ class Agent {
         if (err) {
           return reject('[connect] - :' + err);
         }
-        this.isConnect = false;
+        that.isConnect = false;
         resolve();
       });
     });
