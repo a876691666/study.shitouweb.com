@@ -14,7 +14,7 @@ class Agent {
     return new Promise(function(resolve, reject) {
       if (isConnect) {
         return resolve();
-      }
+      } 
       connection.connect(function(err) {
         if (err) {
           return reject('[connect] - :' + err);
