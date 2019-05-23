@@ -38,7 +38,7 @@ class Agent {
       connection.end(function(err) {
         if (err) {
           return reject('[connect] - :' + err);
-        } 
+        }
         that.isConnect = false;
         resolve();
       });
