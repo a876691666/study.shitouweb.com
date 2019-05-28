@@ -15,7 +15,7 @@
     "ghooks": "^2.0.4"
   },
   "scripts": {
-    "reload": "git pull;forever restart app.js",
+    "reload": "git pull;forever stop app.js;forever start app.js",
     "publish": ".git/hooks/post-receive"
   },
   "config": {
