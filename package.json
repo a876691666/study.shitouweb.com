@@ -10,5 +10,21 @@
     "express-session": "*",
     "socket.io": "^1.4.8",
     "mysql": "^2.17.0"
+  },
+<<<<<<< HEAD
+  "devDependencies": {
+    "ghooks": "^2.0.4"
+  },
+  "scripts": {
+    "publish": ".git/hooks/post-receive"
+  },
+  "config": {
+    "ghooks": {
+      "post-receive": "git pull"
+    }
+=======
+  "scripts": {
+    "reload": "git pull;forever restart app.js"
+>>>>>>> 5e2d6b7600aa132a6cded5079bb14d5a344af6a2
   }
 }
