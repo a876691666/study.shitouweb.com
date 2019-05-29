@@ -1,182 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<script src="/lib/vue/vue.2.5.8.js"></script>
-	<link rel="stylesheet" type="text/css" href="/css/base.css">
-	<link rel="stylesheet" type="text/css" href="/css/main.css">
-	<link rel="icon" href="/favicon.ico" />
-	<title>{{title}}</title>
-</head>
-<body class="docs">
-	<div id="header">
-		<ul id="nav">
-			<li>
-				<a class="nav-link" href="/">主页</a>
-			</li>
-			<li>
-				<a class="nav-link" href="/fe-menu">fe-menu</a>
-			</li>
-		</ul>
-	</div>
-	<div class="background blur">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="/lib/vue/vue.2.5.8.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/base.css" />
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{{ title }}</title>
+  </head>
+  <body class="docs">
+    <div id="header">
+      <ul id="nav">
+        <li>
+          <a class="nav-link" href="/">主页</a>
+        </li>
+        <li>
+          <a class="nav-link" href="/fe-menu">fe-menu</a>
+        </li>
+        <li>
+          <a class="nav-link" href="https://a876691666.github.io/">石头博客</a>
+        </li>
+      </ul>
+    </div>
+    <div class="background blur"></div>
+    <div id="main" :style="style">
+      <div class="sidebar"></div>
+      <div class="content clearfix">
+        <div v-for="c in cardList" class="card-box">
+          <hover3d class="card">
+            <a :href="c.url">
+              <div class="card-mask"></div>
+            </a>
+            <div class="card-content">
+              <h1 class="card-title">{{ c.title }}</h1>
+            </div>
+            <div
+              class="card-background"
+              :style="{background:c.image ? 'url('+c.image+')' : '', backgroundSize:'cover'}"
+            ></div>
+            <div
+              class="card-background blur2"
+              :style="{background:c.image ? 'url('+c.image+')' : '', backgroundSize:'cover'}"
+            ></div>
+          </hover3d>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    Vue.component("hover3d", {
+      template: `
+    		<div :style="boxStyle" @mouseover.capture="onmouseover" @mousemove.capture="onmousemove" @mouseout.capture="onmouseout">
+    			<div :style="translateZ">
+    				<slot>
 
-	</div>
-	<div id='main' :style="style">
-		<div class="sidebar"></div>
-		<div class="content clearfix">
-			<div v-for="c in cardList" class="card-box">
-				<hover3d class="card">
-					<div class="card-mask" @click="goPage(c.url)">
-					</div>
-					<div class="card-content">
-						<h1 class="card-title">{{c.title}}</h1>
-					</div>
-					<div class="card-background" :style="{background:c.image ? 'url('+c.image+')' : '', backgroundSize:'cover'}"> </div>
-					<div class="card-background blur2" :style="{background:c.image ? 'url('+c.image+')' : '', backgroundSize:'cover'}"> </div>
-				</hover3d>
-			</div>
-		</div>
-	</div>
-</body>
-<script>
-	Vue.component('hover3d', {
-		template:`
-				<div :style="boxStyle" @mouseover.capture="onmouseover" @mousemove.capture="onmousemove" @mouseout.capture="onmouseout">
-					<div :style="translateZ">
-						<slot>
+    				</slot>
+    				<div :style="backgroundStyle" class="border-radius20">
+    				</div>
+    				<div :style="shadow" class="border-radius20">
+    				</div>
+    			</div>
+    		</div>
+    `,
+      data: function() {
+        return {
+          boxStyle: {
+            transform: "rotateX(0deg) rotateY(0deg) scale(1)"
+          },
+          backgroundStyle: {
+            width: "100%",
+            height: "100%",
+            background: "",
+            position: "relative",
+            zIndex: 6
+          },
+          shadow: {
+            width: "100%",
+            height: "100%",
+            background: "",
+            position: "absolute",
+            top: 0,
+            transition: "all .4s cubic-bezier(0, 0, 0.61, 3)",
+            backgroundColor: "#aaa",
+            boxShadow: "0 0 20px -5px #000",
+            zIndex: 1
+          },
+          translateZ: {
+            width: "100%",
+            height: "100%",
+            transition: "transform .4s cubic-bezier(0, 0, 0.61, 3)",
+            transform: ""
+          }
+        };
+      },
+      methods: {
+        onmouseover: function(event) {
+          this.boxStyle.transform = "rotateX(0deg) rotateY(0deg) scale(1.2)";
+          this.shadow.boxShadow = "0 0 40px -5px #000";
+          this.shadow.backgroundColor = "#bbb";
+        },
+        onmousemove: function(event) {
+          var x = event.offsetX;
+          var y = event.offsetY;
+          var el = this.$el;
+          var ex = el.clientWidth / 2;
+          var ey = el.clientHeight / 2;
+          var sjxy = {
+            x: x - ex,
+            y: y - ey
+          };
+          var C = Math.sqrt(Math.pow(sjxy.x, 2) + Math.pow(sjxy.y, 2));
+          var angle = (180 * Math.asin(sjxy.x / C)) / Math.PI;
+          if (sjxy.y < 0) {
+            angle = 180 - angle;
+          }
 
-						</slot>
-						<div :style="backgroundStyle" class="border-radius20">
-						</div>
-						<div :style="shadow" class="border-radius20">
-						</div>
-					</div>
-				</div>
-		`,
-		data:function () {
-			return {
-				boxStyle:{
-					transform: 'rotateX(0deg) rotateY(0deg) scale(1)'
-				},
-				backgroundStyle:{
-					width:'100%',
-					height:'100%',
-					background:'',
-					position:'relative',
-					zIndex:6
-				},
-				shadow:{
-					width:'100%',
-					height:'100%',
-					background:'',
-					position:'absolute',
-					top:0,
-					transition:'all .4s cubic-bezier(0, 0, 0.61, 3)',
-					backgroundColor:'#aaa',
-					boxShadow:'0 0 20px -5px #000',
-					zIndex:1
-				},
-				translateZ:{
-					width:'100%',
-					height:'100%',
-					transition:'transform .4s cubic-bezier(0, 0, 0.61, 3)',
-					transform:''
-				}
-			};
-		},
-		methods:{
-			onmouseover:function (event) {
-				this.boxStyle.transform = 'rotateX(0deg) rotateY(0deg) scale(1.2)'
-				this.shadow.boxShadow = '0 0 40px -5px #000'
-				this.shadow.backgroundColor = '#bbb'
-			},
-			onmousemove:function (event) {
-				var x = event.offsetX;
-				var y = event.offsetY;
-				var el = this.$el;
-				var ex = el.clientWidth /2
-				var ey = el.clientHeight /2
-				var sjxy = {
-					x: x- ex,
-					y: y- ey
-				};
-				var C = Math.sqrt(Math.pow(sjxy.x, 2) + Math.pow(sjxy.y, 2));
-				var angle = (180 * Math.asin(sjxy.x / C) / Math.PI);
-				if(sjxy.y<0){
-					angle = 180-angle
-				};
+          var rx = (-(y - ey) / ey) * 10;
+          var ry = ((x - ex) / ex) * 10;
+          this.boxStyle.transform =
+            "rotateX(" + rx + "deg) rotateY(" + ry + "deg) scale(1)";
+          this.translateZ.transform = "translateZ(100px)";
+          this.boxStyle.zIndex = 10;
+          this.boxStyle.position = "relative";
+          this.backgroundStyle.background =
+            "linear-gradient(" +
+            -angle +
+            "deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%)";
+        },
+        onmouseout: function(event) {
+          this.boxStyle.transform = "rotateX(0deg) rotateY(0deg) scale(1)";
+          this.translateZ.transform = "";
+          this.backgroundStyle.background = "";
+          this.boxStyle.zIndex = "";
+          this.boxStyle.position = "";
+          this.shadow.boxShadow = "0 0 20px -5px #000";
+          this.shadow.backgroundColor = "#aaa";
 
-				var rx = -(y-ey)/ey*10;
-				var ry = (x-ex)/ex*10;
-				this.boxStyle.transform = 'rotateX('+rx+'deg) rotateY('+ry+'deg) scale(1)'
-				this.translateZ.transform = 'translateZ(100px)'
-				this.boxStyle.zIndex = 10;
-				this.boxStyle.position = 'relative';
-				this.backgroundStyle.background = 'linear-gradient('+-angle+'deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 60%)'
-
-			},
-			onmouseout:function (event) {
-				this.boxStyle.transform = 'rotateX(0deg) rotateY(0deg) scale(1)'
-				this.translateZ.transform = ''
-				this.backgroundStyle.background = ''
-				this.boxStyle.zIndex = '';
-				this.boxStyle.position = '';
-				this.shadow.boxShadow = '0 0 20px -5px #000'
-				this.shadow.backgroundColor = '#aaa'
-
-				this.boxStyle.boxShadow = ''
-			}
-		}
-	})
-	var title = new Vue({
-		el:'title',
-		data:{
-			title:'石头web'
-		}
-	})
-	var header = new Vue({
-		el:'#header'
-	})
-	var app = new Vue({
-		el:"#main",
-		data:{
-			style:{
-			},
-			msg:'石头WEB',
-			cardList:[{
-				title:'react',
-				image:'/images/background1.jpg',
-				url:'/react/'
-			},
-			// {
-			// 	title:'vue',
-			// 	image:'/images/background1.jpg',
-			// 	url:'/vue/'
-			// },
-			// {
-			// 	title:'angular',
-			// 	image:'/images/background1.jpg',
-			// 	url:'/angular/'
-			// },
-			{
-				title:'fe-menu',
-				image:'/images/background1.jpg',
-				url:'/fe-menu/'
-			},{
-				title:'轻划水面',
-				image:'/images/background1.jpg',
-				url: '/code/waterClick'
-			},{
-				title:'这是一个标题'
-			}]
-		},
-		methods:{
-			goPage:function(url) {
-				if(!url) return;
-				window.location.href = window.location.origin + url;
-			}
-		}
-	})
-</script>
+          this.boxStyle.boxShadow = "";
+        }
+      }
+    });
+    var title = new Vue({
+      el: "title",
+      data: {
+        title: "石头web"
+      }
+    });
+    var header = new Vue({
+      el: "#header"
+    });
+    var app = new Vue({
+      el: "#main",
+      data: {
+        style: {},
+        msg: "石头WEB",
+        cardList: [
+          {
+            title: "石头博客",
+            image: "/images/background1.jpg",
+            url: "https://a876691666.github.io/"
+          },
+          {
+            title: "fe-menu",
+            image: "/images/background1.jpg",
+            url: "/fe-menu/"
+          },
+          {
+            title: "作品 - 轻划水面",
+            image: "/images/background1.jpg",
+            url: "/code/waterClick"
+          },
+          {
+            title: "作品 - 魔方",
+            image: "/images/background1.jpg",
+            url:
+              "https://dntzhang.github.io/wechart/packages/magic-cube/examples/simple/"
+          },
+          {
+            title: "react",
+            image: "/images/background1.jpg",
+            url: "/react/"
+          },
+          // {
+          // 	title:'vue',
+          // 	image:'/images/background1.jpg',
+          // 	url:'/vue/'
+          // },
+          // {
+          // 	title:'angular',
+          // 	image:'/images/background1.jpg',
+          // 	url:'/angular/'
+          // },
+        ]
+      }
+    });
+  </script>
 </html>
